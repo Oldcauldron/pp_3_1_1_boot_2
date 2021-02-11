@@ -1,6 +1,7 @@
 package jm.homework.pp_3_1_1_boot_2.model;
 
 import jm.homework.pp_3_1_1_boot_2.dao.RoleDao;
+import jm.homework.pp_3_1_1_boot_2.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -44,6 +45,11 @@ public class PreparedRoles {
         this.actualRoles = user.getRoles().stream().map(Role::getRole).collect(Collectors.toSet());
     }
 
+    public void setUserRolesAndAllRoles(User user, Set<Role> allRolesInDb) {
+        setAllRoles(allRolesInDb);
+        setUserRoles(user);
+    }
+
     public String getUsername() {
         return username;
     }
@@ -77,6 +83,15 @@ public class PreparedRoles {
             return  "Login should not be empty!";
         }
         return null;
+    }
+
+    public static PreparedRoles getNewPreparedRole(User user, RoleService roleService) {
+        PreparedRoles preparedRoles = new PreparedRoles();
+        preparedRoles.setAllRoles(roleService.getAllRoles());
+        preparedRoles.setUserRoles(user);
+        preparedRoles.setUsername(user.getUsername());
+        preparedRoles.setPassword(user.getPassword());
+        return preparedRoles;
     }
 
 }

@@ -18,6 +18,7 @@ public class SecurityServiceImpl implements SecurityService {
     private AuthenticationManager authenticationManager;
     private AuthenticationManagerBuilder authenticationManagerBuilder;
     private UserDetailsService userDetailsService;
+    private UserService userService;
 
     @Autowired
     public void setAuthenticationManager(AuthenticationManager authenticationManager) {
@@ -33,6 +34,10 @@ public class SecurityServiceImpl implements SecurityService {
         this.userDetailsService = userDetailsService;
     }
 
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
     @Override
     public void autoLogin(User user) {
@@ -52,4 +57,21 @@ public class SecurityServiceImpl implements SecurityService {
 
     }
 
+    @Override
+    public User getAuthUserName() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String username;
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails)principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+
+        if (userService.isExistingUserByName(username)) {
+            return (User) userDetailsService.loadUserByUsername(username);
+        }
+        return new User();
+    }
 }

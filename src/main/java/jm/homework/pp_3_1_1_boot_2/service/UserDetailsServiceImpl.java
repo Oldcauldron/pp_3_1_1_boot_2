@@ -49,16 +49,25 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService, 
     }
 
     @Override
+    public Set<String> getAllRolesString() {
+        return getAllRoles().stream()
+                .map(Role::getRole)
+                .collect(Collectors.toSet());
+    }
+
+    @Override
     public List<User> allUsers() {
         return userDao.findAll();
     }
 
     @Override
     public void addUser(User user) {
-        Set<Role> defaultRoles = Collections.singleton(getRole("ROLE_USER"));
+        if (user.getRoles() == null) {
+            Set<Role> defaultRoles = Collections.singleton(getRole("ROLE_USER"));
+            user.setRoles(defaultRoles);
+        }
         String passCrypt = cryptPass(user.getPassword());
         user.setPassword(passCrypt);
-        user.setRoles(defaultRoles);
         userDao.save(user);
     }
 

@@ -57,43 +57,12 @@ public class UserController {
         User user = userService.showById(id);
 
         if(!model.containsAttribute("preparedRoles")){
-            PreparedRoles preparedRoles = getNewPreparedRole(user);
+            PreparedRoles preparedRoles = PreparedRoles.getNewPreparedRole(user, roleService);
             model.addAttribute("preparedRoles", preparedRoles);
         }
         model.addAttribute("user", user);
         return "editUser";
     }
-//
-//    @PatchMapping(value = "/user/{id}")
-//    public String getEditUser(@ModelAttribute("preparedRoles") @Valid PreparedRoles preparedRoles,
-//                           BindingResult bindingResult,
-//                           @PathVariable("id") long id,
-//                           Model model) {
-//        User user = userService.showById(id);
-//        boolean err = false;
-//        if ((!user.getUsername().equals(preparedRoles.getUsername()))
-//                && userService.isExistingUserByName(preparedRoles.getUsername())) {
-//            model.addAttribute("errorExist", "this name is already exist");
-//            err = true;
-//        }
-//        if (err || !preparedRoles.isNotErrorsTest()) {
-//            model.addAttribute("errorNameEmpty", preparedRoles.getMessageIfNameEmpty());
-//            model.addAttribute("errorPassEmpty", preparedRoles.getMessageIfPasswordEmpty());
-//            model.addAttribute("user", user);
-//            model.addAttribute("preparedRoles", getNewPreparedRole(user));
-//            return "editUser";
-//        }
-//        Set<Role> newRolesSet = preparedRoles.getActualRoles()
-//                                             .stream()
-//                                             .map(roleService::getRole)
-//                                             .collect(Collectors.toSet());
-//        user.setRoles(newRolesSet);
-//        user.setUsername(preparedRoles.getUsername());
-//        user.setPassword(preparedRoles.getPassword());
-//        userService.updateUser(user);
-//        return String.format("redirect:/user/acc/%d", user.getId());
-//    }
-
 
     @PatchMapping(value = "/user/{id}")
     public String getEditUser(@ModelAttribute("preparedRoles") @Valid PreparedRoles preparedRoles,
@@ -104,47 +73,25 @@ public class UserController {
         User user = userService.showById(id);
         boolean err = false;
 
-
         if ((!user.getUsername().equals(preparedRoles.getUsername()))
                 && userService.isExistingUserByName(preparedRoles.getUsername())) {
             redirectAttributes.addFlashAttribute("errorExist", "this name is already exist");
             err = true;
         }
         if (err || bindingResult.hasErrors()) {
-            preparedRoles.setAllRoles(roleService.getAllRoles());
-            preparedRoles.setUserRoles(user);
+            preparedRoles.setUserRolesAndAllRoles(user, roleService.getAllRoles());
             redirectAttributes.addFlashAttribute("preparedRoles", preparedRoles);
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.preparedRoles", bindingResult);
             return String.format("redirect:/user/%d", user.getId());
         }
 
-
         userService.updateUserOfPreparedRoles(user, preparedRoles);
         return String.format("redirect:/user/acc/%d", user.getId());
     }
-
 
     @RequestMapping(value = "/user/{id}", method = RequestMethod.DELETE)
     public String deleteUser(@PathVariable("id") long id, Model model) {
         userService.deleteUserById(id);
         return "redirect:/admin";
     }
-
-
-
-
-
-
-    private PreparedRoles getNewPreparedRole(User user) {
-        PreparedRoles preparedRoles = new PreparedRoles();
-        preparedRoles.setAllRoles(roleService.getAllRoles());
-        preparedRoles.setUserRoles(user);
-        preparedRoles.setUsername(user.getUsername());
-        preparedRoles.setPassword(user.getPassword());
-        return preparedRoles;
-    }
-
-
-
-
 }
