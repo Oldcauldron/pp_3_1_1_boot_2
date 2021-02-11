@@ -21,36 +21,19 @@ public class SecurityServiceImpl implements SecurityService {
     private UserService userService;
 
     @Autowired
-    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+    public SecurityServiceImpl(AuthenticationManager authenticationManager,
+                               AuthenticationManagerBuilder authenticationManagerBuilder,
+                               @Qualifier("userDetailsServiceImpl")
+                               UserDetailsService userDetailsService,
+                               UserService userService) {
         this.authenticationManager = authenticationManager;
-    }
-    @Autowired
-    public void setAuthenticationManagerBuilder(AuthenticationManagerBuilder authenticationManagerBuilder) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
-    }
-    @Autowired
-    public void setUserDetailsService(@Qualifier("userDetailsServiceImpl")
-                                      UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
-    }
-
-    @Autowired
-    public void setUserService(UserService userService) {
         this.userService = userService;
     }
 
     @Override
     public void autoLogin(User user) {
-//        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-//        UsernamePasswordAuthenticationToken authenticationToken =
-//                new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
-//
-//        authenticationManager.authenticate(authenticationToken);
-//
-//        if (authenticationToken.isAuthenticated()) {
-//            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-//        }
-
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);

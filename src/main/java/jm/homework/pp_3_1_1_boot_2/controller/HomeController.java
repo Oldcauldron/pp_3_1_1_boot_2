@@ -59,10 +59,7 @@ public class HomeController {
         model.addAttribute("value", value);
         model.addAttribute("user", user);
         return "index";
-
-
     }
-
 
     @GetMapping(value = "/logincustom")
     public String getLoginPage(@RequestParam(value = "error", required = false) String error,

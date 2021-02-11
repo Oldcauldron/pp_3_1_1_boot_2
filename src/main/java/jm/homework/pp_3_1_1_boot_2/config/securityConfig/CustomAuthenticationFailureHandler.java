@@ -18,8 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
-//    private ObjectMapper objectMapper = new ObjectMapper();
-//
     @Override
     public void onAuthenticationFailure(
             HttpServletRequest request,
@@ -29,17 +27,6 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
 
         RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-//        Map<String, Object> data = new HashMap<>();
-//        data.put(
-//                "timestamp",
-//                Calendar.getInstance().getTime());
-//        data.put(
-//                "exception",
-//                exception.getMessage());
-//
-//        response.getOutputStream()
-//                .println(objectMapper.writeValueAsString(data));
-//        setDefaultFailureUrl("/login.html?error=fail");
         redirectStrategy.sendRedirect(request, response, "/logincustom?error");
     }
 }

@@ -1,9 +1,7 @@
 package jm.homework.pp_3_1_1_boot_2.model;
 
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.util.Collection;
